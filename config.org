@@ -2,6 +2,7 @@
 #+TITLE: BugsWriter's Emacs
 #+CREATOR: suraj
 #+LANGUAGE: en
+[[./img/screen.png]]
 * Installation
 ** Quick Installation
 * Basic Interface Settings
