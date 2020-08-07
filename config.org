@@ -5,6 +5,15 @@
 [[./img/screen.png]]
 * Installation
 ** Quick Installation
+
+* Theme
+#+BEGIN_SRC emacs-lisp
+  (use-package cyberpunk-theme
+    :ensure t
+    :init
+    (load-theme 'cyberpunk t))
+#+END_SRC
+
 * Basic Interface Settings
 These are settings that do not depend on packages and built-in enchancements to the UI.
 ** Looks
@@ -58,6 +67,20 @@ Lets us use asynchronous processes whereever possible, pretty useful.
   (use-package async
     :ensure t
     :init (dired-async-mode 1))
+#+END_SRC
+
+** Cool Icons
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :ensure t)
+
+  (use-package all-the-icons-dired
+    :ensure t
+    :init (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+  (use-package all-the-icons-ibuffer
+    :ensure t
+    :init (all-the-icons-ibuffer-mode 1))
 #+END_SRC
 
 * Minor Conveiniences
@@ -182,7 +205,7 @@ you want and change the numbers to suit you liking, I find 5 to be enough.
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-mode
     :ensure t
-    :init (rainbow-mode 1))
+    :init (add-hook 'prog-mode-hook 'rainbow-mode))
 #+END_SRC
 
 * Org
@@ -333,3 +356,38 @@ you want and change the numbers to suit you liking, I find 5 to be enough.
     (diminish 'rainbow-mode))
 #+END_SRC
 
+* Auto Completion
+** Company
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (setq company-idle-delay 0)
+    (setq company-minimum-prefix-length 3))
+
+  (with-eval-after-load 'company
+    (define-key company-active-map (kbd "M-n") nil)
+    (define-key company-active-map (kbd "M-p") nil)
+    (define-key company-active-map (kbd "C-n") #'company-select-next)
+    (define-key company-active-map (kbd "C-p") #'company-select-previous)
+    (define-key company-active-map (kbd "SPC") #'company-abort))
+#+END_SRC
+
+* Swiper
+#+BEGIN_SRC emacs-lisp
+  (use-package swiper
+    :ensure t
+    :bind ("C-s" . swiper))
+#+END_SRC
+
+* Git integration
+** Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :config
+    (setq magit-push-always-verify nil)
+    (setq git-commit-summary-max-length 50)
+    :bind
+    ("M-g" . magit-status))
+#+END_SRC

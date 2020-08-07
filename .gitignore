@@ -21,3 +21,4 @@ elpa
 transient
 auto-complete-love
 auto-complete-lua
+session.*

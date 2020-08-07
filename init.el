@@ -82,7 +82,7 @@ static char *gnus-pointer[] = {
  '(linum-format (quote dynamic))
  '(package-selected-packages
    (quote
-    (diminish spaceline rainbow-delimiters sudo-edit hungry-delete switch-window rainbow-mode cyberpunk-theme alect-themes cherry-blossom-theme avy smex doom-modeline doom-modeline-mode ido-vertical-mode beacon which-key use-package)))
+    (all-the-icons-ibuffer all-the-icons-dired magit swiper company diminish spaceline rainbow-delimiters sudo-edit hungry-delete switch-window rainbow-mode cyberpunk-theme alect-themes cherry-blossom-theme avy smex doom-modeline doom-modeline-mode ido-vertical-mode beacon which-key use-package)))
  '(vc-annotate-background "#404040")
  '(vc-annotate-color-map
    (quote
