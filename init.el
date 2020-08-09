@@ -82,7 +82,8 @@ static char *gnus-pointer[] = {
  '(linum-format (quote dynamic))
  '(package-selected-packages
    (quote
-    (all-the-icons-ibuffer all-the-icons-dired magit swiper company diminish spaceline rainbow-delimiters sudo-edit hungry-delete switch-window rainbow-mode cyberpunk-theme alect-themes cherry-blossom-theme avy smex doom-modeline doom-modeline-mode ido-vertical-mode beacon which-key use-package)))
+    (emms company-emoji telega wallpaper emojify all-the-icons-ibuffer all-the-icons-dired magit swiper company diminish spaceline rainbow-delimiters sudo-edit hungry-delete switch-window rainbow-mode cyberpunk-theme alect-themes cherry-blossom-theme avy smex doom-modeline doom-modeline-mode ido-vertical-mode beacon which-key use-package)))
+ '(symon-mode t)
  '(vc-annotate-background "#404040")
  '(vc-annotate-color-map
    (quote
@@ -110,4 +111,4 @@ static char *gnus-pointer[] = {
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#000" :foreground "#fff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "SRC" :family "Hack")))))
+ '(default ((t (:inherit nil :stipple nil :background "#000" :foreground "#fff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 115 :width normal :foundry "DAMA" :family "JetBrains Mono")))))

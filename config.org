@@ -83,6 +83,13 @@ Lets us use asynchronous processes whereever possible, pretty useful.
     :init (all-the-icons-ibuffer-mode 1))
 #+END_SRC
 
+** Async
+#+BEGIN_SRC emacs-lisp
+  (use-package async
+    :ensure t
+    :init (dired-async-mode 1))
+#+END_SRC
+
 * Minor Conveiniences
 Emacs is at it's best when it just does things for you, shows you the way, guides you so to speak.
 ** Show lines and column on modeline
@@ -150,7 +157,6 @@ Emacs is at it's best when it just does things for you, shows you the way, guide
 	(point-at-eol)))))
   (global-set-key (kbd "C-c w l") 'copy-whole-line)
 #+END_SRC
-
 * Projectile
 Projectile is an awesome project manager, mostly because it recognized directories with =.git=
 directory as projects and helps you manage them accordingly.
@@ -362,8 +368,10 @@ you want and change the numbers to suit you liking, I find 5 to be enough.
   (use-package company
     :ensure t
     :config
-    (setq company-idle-delay 0)
-    (setq company-minimum-prefix-length 3))
+    (setq company-idle-delay 1)
+    (setq company-minimum-prefix-length 3)
+    :init
+    (company-mode 1))
 
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
@@ -390,4 +398,199 @@ you want and change the numbers to suit you liking, I find 5 to be enough.
     (setq git-commit-summary-max-length 50)
     :bind
     ("M-g" . magit-status))
+#+END_SRC
+
+* EXWM
+Using emacs as a window manager
+** EXWM main package
+#+BEGIN_SRC emacs-lisp
+  (use-package exwm
+    :ensure t
+    :config
+    (require 'exwm-config)
+    (fringe-mode 3)
+    (server-start)
+    (exwm-config-ido)
+    (setq exwm-workspace-number 1)
+    (exwm-input-set-key (kbd "s-r") #'exwm-reset)
+    (exwm-input-set-key (kbd "s-k") #'exwm-workspace-delete)
+    (exwm-input-set-key (kbd "s-w") #'exwm-workspace-swap)
+    (dotimes (i 10)
+      (exwm-input-set-key (kbd (format "s-%d" i))
+			  `(lambda ()
+			     (interactive)
+			     (exwm-workspace-switch-create ,i)
+			     (message "Workspace %d", i))))
+    (exwm-input-set-key (kbd "s-&")
+			(lambda (command)
+			  (interactive (list (read-shell-command "$ ")))
+			  (start-process-shell-command command nil command)))
+    (exwm-enable))
+
+#+END_SRC
+
+** Audio Controls
+*** Volume modifier
+The amount of volume inc/dec.
+#+BEGIN_SRC emacs-lisp
+  (defconst volumeModifier "4")
+#+END_SRC
+
+*** Functions to start processes
+All functions to change volume. (mute, raise vol, lower vol).
+#+BEGIN_SRC emacs-lisp
+  (defun audio/mute ()
+    (interactive)
+    (start-process "audio-mute" nil "pulsemixer" "--toggle-mute"))
+
+  (defun audio/raise-volume ()
+    (interactive)
+    (start-process "raise-volume" nil "pulsemixer" "--change-volume" (concat "+" volumeModifier)))
+
+  (defun audio/lower-volume ()
+    (interactive)
+    (start-process "lower-volume" nil "pulsemixer" "--change-volume" (concat "-" volumeModifier)))
+#+END_SRC
+
+*** Keybindings to start processes
+Setting volume raise and lower with Volume Buttons.
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<XF86AudioMute>") 'audio/mute)
+  (global-set-key (kbd "<XF86AudioRaiseVolume>") 'audio/raise-volume)
+  (global-set-key (kbd "<XF86AudioLowerVolume>") 'audio/lower-volume)
+#+END_SRC
+
+*** Screenshots
+I don't need scrot to take screenshots, or shutter or whatever tools you might have.
+**** Screenshotting the entire screen
+#+BEGIN_SRC emacs-lisp
+  (require 'cl)
+  (defun daedreth/take-screenshot ()
+    "Takes a fullscreen screenshot of the current workspace"
+    (interactive)
+    (when window-system
+    (loop for i downfrom 3 to 1 do
+	  (progn
+	    (message (concat (number-to-string i) "..."))
+	    (sit-for 1)))
+    (message "Cheese!")
+    (sit-for 1)
+    (start-process "screenshot" nil "import" "-window" "root" 
+	       (concat (getenv "HOME") "/" (subseq (number-to-string (float-time)) 0 10) ".png"))
+    (message "Screenshot taken!")))
+  (global-set-key (kbd "<print>") 'daedreth/take-screenshot)
+#+END_SRC
+
+**** Screenshotting a region
+#+BEGIN_SRC emacs-lisp
+  (defun daedreth/take-screenshot-region ()
+    "Takes a screenshot of a region selected by the user."
+    (interactive)
+    (when window-system
+    (call-process "import" nil nil nil ".newScreen.png")
+    (call-process "convert" nil nil nil ".newScreen.png" "-shave" "1x1"
+		  (concat (getenv "HOME") "/" (subseq (number-to-string (float-time)) 0 10) ".png"))
+    (call-process "rm" nil nil nil ".newScreen.png")))
+  (global-set-key (kbd "<C-print>") 'daedreth/take-screenshot-region)
+#+END_SRC
+
+* Dmenu
+Menu for emacs
+#+BEGIN_SRC emacs-lisp
+  (use-package dmenu
+    :ensure t
+    :bind
+      ("s-SPC" . 'dmenu))
+#+END_SRC
+
+* Clock
+  A clock to see time. Because time is important. 
+** Time Format
+#+BEGIN_SRC emacs-lisp
+  (setq display-time-24hr-format t)
+  (setq display-time-format "%H:%M")
+#+END_SRC
+
+** Enabling the mode
+#+BEGIN_SRC emacs-lisp
+  (display-time-mode 1)
+#+END_SRC
+
+* Emojify
+#+BEGIN_SRC emacs-lisp
+  (use-package emojify
+    :ensure t
+    :init
+    (emojify-mode 1))
+
+  (use-package company-emoji
+    :ensure t)
+
+  (require 'company-emoji)
+  (add-to-list 'company-backends 'company-emoji)
+#+END_SRC
+
+* Telega
+#+BEGIN_SRC emacs-lisp
+  (use-package telega
+    :load-path  "~/telega.el"
+    :commands (telega)
+    :defer t
+    :init
+    (telega-notifications-mode 1))
+#+END_SRC
+
+* Music
+Music in emacs
+** EMMS
+#+BEGIN_SRC emacs-lisp
+  (use-package emms
+    :ensure t
+    :config
+      (require 'emms-setup)
+      (require 'emms-player-mpd)
+      (emms-all) ; don't change this to values you see on stackoverflow questions if you expect emms to work
+      (setq emms-seek-seconds 5)
+      (setq emms-player-list '(emms-player-mpd))
+      (setq emms-info-functions '(emms-info-mpd))
+      (setq emms-player-mpd-server-name "localhost")
+      (setq emms-player-mpd-server-port "6601")
+    :bind
+      ("s-m p" . emms)
+      ("s-m b" . emms-smart-browse)
+      ("s-m r" . emms-player-mpd-update-all-reset-cache)
+      ("<XF86AudioPrev>" . emms-previous)
+      ("<XF86AudioNext>" . emms-next)
+      ("<XF86AudioPlay>" . emms-pause)
+      ("<XF86AudioStop>" . emms-stop))
+#+END_SRC
+** MPC
+#+BEGIN_SRC emacs-lisp
+  (setq mpc-host "localhost:6601")
+
+  (defun mpd/start-music-daemon ()
+    "Start MPD, connects to it and syncs the metadata cache."
+    (interactive)
+    (shell-command "mpd")
+    (mpd/update-database)
+    (emms-player-mpd-connect)
+    (emms-cache-set-from-mpd-all)
+    (message "MPD Started!"))
+  (global-set-key (kbd "s-m c") 'mpd/start-music-daemon)
+
+
+  (defun mpd/kill-music-daemon ()
+    "Stops playback and kill the music daemon."
+    (interactive)
+    (emms-stop)
+    (call-process "killall" nil nil nil "mpd")
+    (message "MPD Killed!"))
+  (global-set-key (kbd "s-m k") 'mpd/kill-music-daemon)
+
+  (defun mpd/update-database ()
+    "Updates the MPD database synchronously."
+    (interactive)
+    (call-process "mpc" nil nil nil "update")
+    (message "MPD Database Updated!"))
+  (global-set-key (kbd "s-m u") 'mpd/update-database)
 #+END_SRC
